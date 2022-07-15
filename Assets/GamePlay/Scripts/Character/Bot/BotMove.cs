@@ -10,28 +10,35 @@ public class BotMove : Properties
 
     private void Update()
     {
-        if(!hasTarget && targetStacks.Count > 0)
+        if (!hasTarget && targetStacks.Count > 0)
         {
-            ChooseTarget();
-        }
-        else if(!hasTarget && targetStacks.Count == 0)
-        {
-            if (animator.GetBool(StringCache.IsRunning))
+            ClaimStack();
+            if (!animator.GetBool(StringCache.IsRunning))
             {
-                navMeshAgent.SetDestination(transform.position);
-                animator.SetBool(StringCache.IsRunning, false);
+                animator.SetBool(StringCache.IsRunning, true);
             }
+        }
+        else if (!hasTarget && targetStacks.Count == 0)
+        {
+            StartCoroutine(BuildBridge());
         }
     }
 
-    private void ChooseTarget()
+    public IEnumerator BuildBridge()
+    {
+        yield return new WaitForSeconds(1f);
+        if (targetStacks.Count == 0)
+        {
+            hasTarget = true;
+            targetPos = targetBridge.transform.position;
+            navMeshAgent.SetDestination(targetPos);
+        }
+    }
+
+    private void ClaimStack()
     {
         hasTarget = true;
         targetPos = targetStacks[0].transform.position;
         navMeshAgent.SetDestination(targetPos);
-        if (!animator.GetBool(StringCache.IsRunning))
-        {
-            animator.SetBool(StringCache.IsRunning, true);
-        }
     }
 }

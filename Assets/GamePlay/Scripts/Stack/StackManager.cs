@@ -18,21 +18,5 @@ public class StackManager : MonoBehaviour
         {
             stacks[i] = new List<GameObject>();
         }
-        RefreshStacks();
-    }
-
-    public void RefreshStacks()
-    {
-        GameObject[] allStacks = GameObject.FindGameObjectsWithTag(StringCache.Stack);
-        for (int i = 0; i < allStacks.Length; i++)
-        {
-            for(int j = 0; j < 4; j++)
-            {
-                if (allStacks[i].GetComponent<Renderer>().material.color.Equals(colors[j]))
-                {
-                    stacks[j].Add(allStacks[i]);
-                }
-            }
-        }
     }
 }

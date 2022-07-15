@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 4151369882561731315}
   - component: {fileID: 4151369882561731314}
   - component: {fileID: 4151369882561731313}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: StackYellow
   m_TagString: Stack
   m_Icon: {fileID: 0}

@@ -18,6 +18,11 @@ public class StackControl : MonoBehaviour
 
     private void AddStack(GameObject stack)
     {
+        Vector3 stackPos = stack.transform.position;
+        int x = ((int)stackPos.x + 8) / 4;
+        int z = ((int)stackPos.z + 16) / 4;
+        properties.currentStackSpawner.GetComponent<StackSpawner>().hasStack[x][z] = false;
+
         stack.transform.SetParent(bag.transform);
         if (prevStack)
         {
@@ -34,5 +39,29 @@ public class StackControl : MonoBehaviour
         prevStack = stack;
         properties.targetStacks.Remove(stack);
         properties.hasTarget = false;
+    }
+
+    public void RemoveStack()
+    {
+        int stackCnt= bag.transform.childCount;
+        if (stackCnt == 0)
+        {
+            Debug.Log("Cannot remove stack");
+            return;
+        }
+
+        GameObject topStack = bag.transform.GetChild(stackCnt-1).gameObject;
+        if(stackCnt == 1)
+        {
+            prevStack = null;
+        }
+        if(stackCnt > 1)
+        {
+            prevStack = bag.transform.GetChild(stackCnt - 2).gameObject;
+        }
+        topStack.transform.SetParent(properties.currentStackSpawner.transform);
+        topStack.transform.localPosition = properties.currentStackSpawner.GetComponent<StackSpawner>().RandomSpawnPoint();
+        topStack.transform.localRotation = Quaternion.identity;
+        topStack.tag = StringCache.Stack;
     }
 }
