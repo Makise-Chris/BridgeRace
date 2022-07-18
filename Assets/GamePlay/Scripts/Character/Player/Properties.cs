@@ -9,6 +9,9 @@ public class Properties : MonoBehaviour
     public Color color;
     public Animator animator;
     public bool hasTarget;
+    public GameObject findStagePoint;
+    public bool isBot;
+
 
     public GameObject currentStage;
     public GameObject currentStackSpawner;
@@ -27,11 +30,11 @@ public class Properties : MonoBehaviour
     public void findCurrentStage()
     {
         RaycastHit hit;
-        if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.down), out hit, Mathf.Infinity))
+        if (Physics.Raycast(findStagePoint.transform.position, findStagePoint.transform.TransformDirection(Vector3.down), out hit, Mathf.Infinity))
         {
             if (hit.transform.gameObject != currentStage)
             {
-                if (hit.transform.gameObject.layer == LayerMask.NameToLayer("Ground"))
+                if (hit.transform.gameObject.layer == LayerMask.NameToLayer(StringCache.Ground));
                 {
                     currentStage = hit.transform.gameObject;
                 }
@@ -48,7 +51,7 @@ public class Properties : MonoBehaviour
 
     public IEnumerator findCurrentTargetStacks()
     {
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(0.3f);
         targetStacks.Clear();
         int length = currentTargetStacks.transform.childCount;
         for(int i=0; i < length; i++)
@@ -56,6 +59,28 @@ public class Properties : MonoBehaviour
             if (currentTargetStacks.transform.GetChild(i).GetComponent<Renderer>().material.color.Equals(color))
             {
                 targetStacks.Add(currentTargetStacks.transform.GetChild(i).gameObject);
+            }
+        }
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag(StringCache.NextStage))
+        {
+            findCurrentStage();
+            StartCoroutine(currentStackSpawner.GetComponent<StackSpawner>().SpawnCharacterStack(index));
+            StartCoroutine(findCurrentTargetStacks());
+            hasTarget = false;
+        }
+        if (other.CompareTag(StringCache.WinPos))
+        {
+            if (isBot)
+            {
+                UIManager.instance.LosePanel();
+            }
+            else
+            {
+                UIManager.instance.WinPanel();
             }
         }
     }

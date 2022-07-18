@@ -9,10 +9,16 @@ public class Move : MonoBehaviour
     [SerializeField]
     private float moveSpeed;
     [SerializeField]
-    private Rigidbody rb;
+    private CharacterController characterController;
+    public Vector3 velocity;
+    public float gravity;
+    public bool isGrounded;
+    public float groundDistance;
+    public LayerMask groundLayer;
     [SerializeField] private Animator animator;
+    public GameObject raycastPoint;
 
-    void FixedUpdate()
+    void Update()
     {
         if (joystick.Horizontal != 0 || joystick.Vertical != 0)
         {
@@ -33,13 +39,27 @@ public class Move : MonoBehaviour
 
     private void PlayerMove()
     {
-        rb.velocity = new Vector3(joystick.Horizontal * moveSpeed, rb.velocity.y, joystick.Vertical * moveSpeed);
+        isGrounded = Physics.CheckSphere(transform.position, groundDistance, groundLayer);
+
+        if(isGrounded && !raycastPoint.activeInHierarchy)
+        {
+            raycastPoint.SetActive(true);
+        }
+
+        if(isGrounded && velocity.y < 0)
+        {
+            velocity.y = 0;
+        }
+
+        characterController.Move(new Vector3(joystick.Horizontal * moveSpeed, 0, joystick.Vertical * moveSpeed));
+        velocity.y -= gravity * Time.deltaTime;
+        characterController.Move(velocity * Time.deltaTime);
     }
 
     private void PlayerRotate()
     {
         float angle = Mathf.Atan2(joystick.Vertical, joystick.Horizontal) * Mathf.Rad2Deg;
         Quaternion targetRotation = Quaternion.Euler(0, -angle + 90, 0);
-        rb.rotation = Quaternion.Slerp(rb.rotation, targetRotation, 0.8f);
+        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, 0.8f);
     }
 }

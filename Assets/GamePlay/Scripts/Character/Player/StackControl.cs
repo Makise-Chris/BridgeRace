@@ -7,6 +7,7 @@ public class StackControl : MonoBehaviour
     public Properties properties;
     public GameObject bag;
     public GameObject prevStack;
+    public float stackFallRadius;
 
     private void OnTriggerEnter(Collider other)
     {
@@ -18,7 +19,7 @@ public class StackControl : MonoBehaviour
 
     private void AddStack(GameObject stack)
     {
-        Vector3 stackPos = stack.transform.position;
+        Vector3 stackPos = stack.transform.localPosition;
         int x = ((int)stackPos.x + 8) / 4;
         int z = ((int)stackPos.z + 16) / 4;
         properties.currentStackSpawner.GetComponent<StackSpawner>().hasStack[x][z] = false;
@@ -63,5 +64,28 @@ public class StackControl : MonoBehaviour
         topStack.transform.localPosition = properties.currentStackSpawner.GetComponent<StackSpawner>().RandomSpawnPoint();
         topStack.transform.localRotation = Quaternion.identity;
         topStack.tag = StringCache.Stack;
+    }
+
+    public void RemoveAllStack()
+    {
+        int stackCnt = bag.transform.childCount;
+        if (stackCnt == 0) return;
+
+        foreach(Transform child in bag.transform)
+        {
+            StackFall(child.gameObject);
+        }
+        prevStack = null;
+    }
+
+    public void StackFall(GameObject stack)
+    {
+        float x = Random.Range(-1, 1) * stackFallRadius;
+        float z = Random.Range(-1, 1) * stackFallRadius;
+        Vector3 fallPos = new Vector3(x, -0.06f, z) + new Vector3(transform.position.x, 0, transform.position.z);
+        stack.transform.SetParent(properties.currentStackSpawner.transform);
+        stack.transform.localPosition = fallPos;
+        stack.transform.localRotation = Quaternion.identity;
+        stack.tag = StringCache.Stack;
     }
 }

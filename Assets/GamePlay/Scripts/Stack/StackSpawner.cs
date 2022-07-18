@@ -9,9 +9,11 @@ public class StackSpawner : MonoBehaviour
     public bool isStartStage;
     public List<string> stackTags;
     public bool[][] hasStack;
+    public bool[] isSpawned;
 
     private void Start()
     {
+        isSpawned = new bool[CharacterCnt];
         hasStack = new bool[5][];
         for(int i = 0; i < 5; i++)
         {
@@ -32,10 +34,32 @@ public class StackSpawner : MonoBehaviour
             for(int j = 0; j < CharacterCnt; j++)
             {
                 Vector3 spawnPos = RandomSpawnPoint();
-                GameObject newStack = ObjectPooler.instance.SpawnFromPool(stackTags[j]);
-                newStack.transform.SetParent(transform);
-                newStack.transform.localPosition = spawnPos;
+                if (!spawnPos.Equals(Vector3.zero))
+                {
+                    GameObject newStack = ObjectPooler.instance.SpawnFromPool(stackTags[j]);
+                    newStack.transform.SetParent(transform);
+                    newStack.transform.localPosition = spawnPos;
+                }
             }
+        }
+    }
+
+    public IEnumerator SpawnCharacterStack(int index)
+    {
+        yield return null;
+        if (!isSpawned[index])
+        {
+            for (int i = 0; i < stackPerCharacter; i++)
+            {
+                Vector3 spawnPos = RandomSpawnPoint();
+                if (!spawnPos.Equals(Vector3.zero))
+                {
+                    GameObject newStack = ObjectPooler.instance.SpawnFromPool(stackTags[index]);
+                    newStack.transform.SetParent(transform);
+                    newStack.transform.localPosition = spawnPos;
+                }
+            }
+            isSpawned[index] = true;
         }
     }
 

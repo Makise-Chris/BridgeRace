@@ -26,7 +26,8 @@ public class BotMove : Properties
 
     public IEnumerator BuildBridge()
     {
-        yield return new WaitForSeconds(1f);
+        navMeshAgent.SetDestination(transform.position);
+        yield return new WaitForSeconds(0.3f);
         if (targetStacks.Count == 0)
         {
             hasTarget = true;

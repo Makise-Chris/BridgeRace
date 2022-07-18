@@ -17,16 +17,13 @@ public class BuildBridge : MonoBehaviour
         RaycastHit hit;
         if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.down), out hit, Mathf.Infinity))
         {
-            if (hit.transform.CompareTag("Step"))
+            if (hit.transform.CompareTag(StringCache.Step))
             {
                 if(bag.childCount > 0)
                 {
+                    hit.transform.GetChild(0).GetComponent<BoxCollider>().enabled = false;
                     if (!hit.transform.GetComponent<MeshRenderer>().enabled)
                     {
-                        if (hit.transform.GetChild(1).GetComponent<BoxCollider>().enabled)
-                        {
-                            hit.transform.GetChild(1).GetComponent<BoxCollider>().enabled = false;
-                        }
                         hit.transform.GetComponent<MeshRenderer>().enabled = true;
                     }
 
@@ -40,6 +37,14 @@ public class BuildBridge : MonoBehaviour
                 {
                     StartCoroutine(properties.findCurrentTargetStacks());
                     properties.hasTarget = false;
+                    if (!properties.isBot)
+                    {
+                        if (!hit.transform.GetComponent<MeshRenderer>().material.color.Equals(properties.color))
+                        {
+                            hit.transform.GetChild(0).GetComponent<BoxCollider>().enabled = true;
+                            gameObject.SetActive(false);
+                        }
+                    }
                 }
             }
         }
