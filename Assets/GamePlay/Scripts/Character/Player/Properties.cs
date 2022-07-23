@@ -9,9 +9,7 @@ public class Properties : MonoBehaviour
     public Color color;
     public Animator animator;
     public bool hasTarget;
-    public GameObject findStagePoint;
     public bool isBot;
-
 
     public GameObject currentStage;
     public GameObject currentStackSpawner;
@@ -19,8 +17,11 @@ public class Properties : MonoBehaviour
     public GameObject currentBridges;
     public GameObject targetBridge;
 
+    public CharacterState characterState;
+
     public virtual void Start()
     {
+        characterState = CharacterState.ClaimStack;
         targetStacks = StackManager.instance.stacks[index];
         findCurrentStage();
         StartCoroutine(findCurrentTargetStacks());
@@ -29,18 +30,6 @@ public class Properties : MonoBehaviour
 
     public void findCurrentStage()
     {
-        RaycastHit hit;
-        if (Physics.Raycast(findStagePoint.transform.position, findStagePoint.transform.TransformDirection(Vector3.down), out hit, Mathf.Infinity))
-        {
-            if (hit.transform.gameObject != currentStage)
-            {
-                if (hit.transform.gameObject.layer == LayerMask.NameToLayer(StringCache.Ground));
-                {
-                    currentStage = hit.transform.gameObject;
-                }
-            }
-        }
-
         currentStackSpawner = currentStage.transform.GetChild(1).gameObject;
         currentBridges = currentStage.transform.GetChild(0).gameObject;
 
@@ -67,7 +56,9 @@ public class Properties : MonoBehaviour
     {
         if (other.CompareTag(StringCache.NextStage))
         {
+            currentStage = other.GetComponent<ChangeState>().state;
             findCurrentStage();
+
             StartCoroutine(currentStackSpawner.GetComponent<StackSpawner>().SpawnCharacterStack(index));
             StartCoroutine(findCurrentTargetStacks());
             hasTarget = false;
@@ -84,4 +75,12 @@ public class Properties : MonoBehaviour
             }
         }
     }
+}
+
+[System.Serializable]
+public enum CharacterState
+{
+    ClaimStack,
+    BuildBridge,
+    Fall
 }

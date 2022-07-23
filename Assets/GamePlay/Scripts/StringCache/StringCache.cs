@@ -5,6 +5,7 @@ using UnityEngine;
 public class StringCache
 {
     public static string IsRunning = "IsRunning";
+    public static string Fall = "Fall";
     public static string Stack = "Stack";
     public static string Untagged = "Untagged";
     public static string Step = "Step";

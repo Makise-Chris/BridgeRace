@@ -10,14 +10,15 @@ public class StackSpawner : MonoBehaviour
     public List<string> stackTags;
     public bool[][] hasStack;
     public bool[] isSpawned;
-
+    public int mapSizeX = 5;
+    public int mapSizeY = 9; 
     private void Start()
     {
         isSpawned = new bool[CharacterCnt];
-        hasStack = new bool[5][];
-        for(int i = 0; i < 5; i++)
+        hasStack = new bool[mapSizeX][];
+        for(int i = 0; i < mapSizeX; i++)
         {
-            hasStack[i] = new bool[9];
+            hasStack[i] = new bool[mapSizeY];
         }
 
         if (isStartStage)
@@ -83,9 +84,9 @@ public class StackSpawner : MonoBehaviour
 
     public Vector3 findSpawnPoint()
     {
-        for(int i=0; i<5; i++)
+        for(int i=0; i<mapSizeX; i++)
         {
-            for(int j=0;j<9; j++)
+            for(int j=0;j<mapSizeY; j++)
             {
                 if (!hasStack[i][j])
                 {

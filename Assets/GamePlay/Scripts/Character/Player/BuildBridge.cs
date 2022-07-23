@@ -19,30 +19,36 @@ public class BuildBridge : MonoBehaviour
         {
             if (hit.transform.CompareTag(StringCache.Step))
             {
-                if(bag.childCount > 0)
+                MeshRenderer hitMR = hit.transform.GetComponent<MeshRenderer>();
+                BoxCollider hitBox = hit.transform.GetChild(0).GetComponent<BoxCollider>();
+                if (hitMR != null)
                 {
-                    hit.transform.GetChild(0).GetComponent<BoxCollider>().enabled = false;
-                    if (!hit.transform.GetComponent<MeshRenderer>().enabled)
+                    if (bag.childCount > 0)
                     {
-                        hit.transform.GetComponent<MeshRenderer>().enabled = true;
-                    }
+                        hitBox.enabled = false;
 
-                    if (!hit.transform.GetComponent<MeshRenderer>().material.color.Equals(properties.color))
-                    {
-                        hit.transform.GetComponent<MeshRenderer>().material.color = properties.color;
-                        stackControl.RemoveStack();
-                    }
-                }
-                if(bag.childCount == 0)
-                {
-                    StartCoroutine(properties.findCurrentTargetStacks());
-                    properties.hasTarget = false;
-                    if (!properties.isBot)
-                    {
-                        if (!hit.transform.GetComponent<MeshRenderer>().material.color.Equals(properties.color))
+                        if (!hitMR.enabled)
                         {
-                            hit.transform.GetChild(0).GetComponent<BoxCollider>().enabled = true;
-                            gameObject.SetActive(false);
+                            hitMR.enabled = true;
+                        }
+
+                        if (!hitMR.material.color.Equals(properties.color))
+                        {
+                            hitMR.material.color = properties.color;
+                            stackControl.RemoveStack();
+                        }
+                    }
+                    if (bag.childCount == 0)
+                    {
+                        StartCoroutine(properties.findCurrentTargetStacks());
+                        properties.hasTarget = false;
+                        if (!properties.isBot)
+                        {
+                            if (!hitMR.material.color.Equals(properties.color))
+                            {
+                                hitBox.enabled = true;
+                                gameObject.SetActive(false);
+                            }
                         }
                     }
                 }

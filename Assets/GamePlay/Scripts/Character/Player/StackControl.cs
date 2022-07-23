@@ -11,9 +11,21 @@ public class StackControl : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if(other.CompareTag(StringCache.Stack) && other.GetComponent<Renderer>().material.color.Equals(properties.color))
+        if(other.CompareTag(StringCache.Stack) && other.GetComponent<Renderer>().material.color.Equals(properties.color)
+            && properties.characterState == CharacterState.ClaimStack)
         {
             AddStack(other.gameObject);
+        }
+
+        if (other.CompareTag(StringCache.Player))
+        {
+            //if (properties.characterState == CharacterState.ClaimStack)
+            //{
+            //    if (bag.transform.childCount <= other.GetComponent<StackControl>().bag.transform.childCount)
+            //    {
+            //        StartCoroutine(PlayerFall());
+            //    }
+            //}
         }
     }
 
@@ -87,5 +99,27 @@ public class StackControl : MonoBehaviour
         stack.transform.localPosition = fallPos;
         stack.transform.localRotation = Quaternion.identity;
         stack.tag = StringCache.Stack;
+    }
+
+    public IEnumerator PlayerFall()
+    {
+        RemoveAllStack();
+        properties.characterState = CharacterState.Fall;
+        Animator anim = properties.animator;
+        bool isRunning = anim.GetBool(StringCache.IsRunning);
+        if (anim.GetInteger(StringCache.Fall) != 0)
+        {
+            anim.SetInteger(StringCache.Fall, 0);
+        }
+        yield return new WaitForSeconds(2f);
+        properties.characterState = CharacterState.ClaimStack;
+        if (isRunning)
+        {
+            anim.SetInteger(StringCache.Fall, 1);
+        }
+        else
+        {
+            anim.SetInteger(StringCache.Fall, -1);
+        }
     }
 }
